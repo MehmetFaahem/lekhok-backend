@@ -4,6 +4,7 @@ const multer = require("multer");
 const imageServer = require("cloudinary").v2;
 const userSchema = require("../models/user");
 const bcrypt = require("bcrypt");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 imageServer.config({
   cloud_name: "devvizeuo",
@@ -11,12 +12,21 @@ imageServer.config({
   api_secret: "VaLQ0urXLFQWXmWEIVe5nAXHWbA",
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, __dirname + "/uploaded");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "-" + Date.now() + ".png");
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, __dirname + "/uploaded");
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.fieldname + "-" + Date.now() + ".png");
+//   },
+// });
+
+const storage = new CloudinaryStorage({
+  cloudinary: imageServer,
+  params: {
+    folder: "Lekhoks",
+    format: async (req, file) => "png",
+    public_id: (req, file) => "computed-filename-using-request",
   },
 });
 
